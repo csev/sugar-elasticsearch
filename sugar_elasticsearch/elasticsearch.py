@@ -36,13 +36,13 @@ class Elasticsearch(object):
 
         @bp.route('/elasticsearch/<index>', methods=cls.__methods__)
         @webtoken
-        @scope({ 'elasticsearch.adminstrator': True, 'elasticsearch.index': '$index' })
+        @scope({ 'elasticsearch.administrator': True, 'elasticsearch.index': '$index' })
         async def handler(*args, **kargs):
             return await cls.handler(*args, **kargs)
 
         @bp.route('/elasticsearch/<index>/<path:path>', methods=cls.__methods__)
         @webtoken
-        @scope({ 'elasticsearch.adminstrator': True, 'elasticsearch.index': '$index' })
+        @scope({ 'elasticsearch.administrator': True, 'elasticsearch.index': '$index' })
         async def handler(*args, **kargs):
             return await cls.handler(*args, **kargs)
 
