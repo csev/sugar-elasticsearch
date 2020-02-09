@@ -4,7 +4,7 @@ import aiohttp
 from sanic import Blueprint
 from sanic.response import json, text
 
-from sugar_api import webtoken, scope, preflight
+from sugar_api import webtoken, scope, preflight, CORS
 
 
 class Elasticsearch(object):
@@ -70,6 +70,10 @@ class Elasticsearch(object):
         async with aiohttp.ClientSession() as session:
             async with session.request(request.method, uri, data=request.body, headers=headers) as response:
                 try:
-                    return json(await response.json())
+                    return json(await response.json(), headers={
+                        'Access-Control-Allow-Origin': CORS.get_origins()
+                    })
                 except aiohttp.ContentTypeError:
-                    return text(await response.text())
+                    return text(await response.text(), headers={
+                        'Access-Control-Allow-Origin': CORS.get_origins()
+                    })
