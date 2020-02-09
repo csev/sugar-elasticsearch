@@ -29,15 +29,15 @@ class Elasticsearch(object):
         bp = Blueprint(*args, **kargs)
 
         @bp.options('/elasticsearch')
-        async def preflight(*args, **kargs):
+        async def options(*args, **kargs):
             return preflight(methods=cls.__methods__)
 
         @bp.options('/elasticsearch/<index>')
-        async def preflight(*args, **kargs):
+        async def options(*args, **kargs):
             return preflight(methods=cls.__methods__)
 
         @bp.options('/elasticsearch/<index>/<path:path>')
-        async def preflight(*args, **kargs):
+        async def options(*args, **kargs):
             return preflight(methods=cls.__methods__)
 
         @bp.route('/elasticsearch', methods=cls.__methods__)
