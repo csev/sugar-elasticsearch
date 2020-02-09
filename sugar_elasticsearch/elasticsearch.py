@@ -4,13 +4,13 @@ import aiohttp
 from sanic import Blueprint
 from sanic.response import json, text
 
-from sugar_api import webtoken, scope
+from sugar_api import webtoken, scope, preflight
 
 
 class Elasticsearch(object):
 
     __host__ = os.getenv('SUGAR_ELASTICSEARCH_URI', 'http://localhost:9200')
-    __methods__ = [ 'OPTIONS', 'HEAD', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE' ]
+    __methods__ = [ 'HEAD', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE' ]
 
     @classmethod
     def set_host(cls, uri):
@@ -28,7 +28,19 @@ class Elasticsearch(object):
 
         bp = Blueprint(*args, **kargs)
 
-        @bp.route('/elasticsearch/', methods=cls.__methods__)
+        @bp.options('/elasticsearch')
+        async def preflight(*args, **kargs):
+            return preflight(methods=cls.__methods__)
+
+        @bp.options('/elasticsearch/<index>')
+        async def preflight(*args, **kargs):
+            return preflight(methods=cls.__methods__)
+
+        @bp.options('/elasticsearch/<index>/<path:path>')
+        async def preflight(*args, **kargs):
+            return preflight(methods=cls.__methods__)
+
+        @bp.route('/elasticsearch', methods=cls.__methods__)
         @webtoken
         @scope({ 'elasticsearch.administrator': True })
         async def handler(*args, **kargs):
